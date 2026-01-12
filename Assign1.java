@@ -3,93 +3,99 @@ import java.util.Scanner;
 public class Assign1 {
 
     // Maximum size of tree array
-    static int MAX = 50;
+    static int n = 10;
 
     // Array to store tree elements
-    static int[] tree = new int[MAX];
+    static String[] tree = new String[n];
 
-    // Number of nodes actually present
-    static int n = 0;
 
     // -------- CREATE TREE --------
     // User enters elements level by level
     static void createTree(Scanner sc) {
-        System.out.print("Enter number of nodes: ");
+        System.out.print("Enter number of elements: ");
         n = sc.nextInt();
+        sc.nextLine(); // clear buffer
+        tree = new String[n];
+
+
 
         System.out.println("Enter elements level-wise:");
         for (int i = 0; i < n; i++) {
-            tree[i] = sc.nextInt();
+            tree[i] = sc.nextLine();
         }
     }
 
-    // -------- DISPLAY LEVEL ORDER --------
-    // Simply prints array elements
-    static void displayLevelOrder() {
+ // Preorder traversal method
+    public static void preorder(String[] tree, int index) {
+        if (index >= tree.length || tree[index] == null)
+            return;
+        System.out.print(tree[index] + " ");
+        preorder(tree, 2 * index + 1);
+        preorder(tree, 2 * index + 2);
+    }
+
+    // Postorder traversal method
+    public static void postorder(String[] tree, int index) {
+        if (index >= tree.length || tree[index] == null)
+            return;
+        postorder(tree, 2 * index + 1);
+        postorder(tree, 2 * index + 2);
+        System.out.print(tree[index] + " ");
+    }
+
+    // Inorder traversal method
+    public static void Inorder(String[] tree, int index) {
+        if (index >= tree.length || tree[index] == null)
+            return;
+        Inorder(tree, 2 * index + 1);
+        System.out.print(tree[index] + " ");
+        Inorder(tree, 2 * index + 2);
+    }
+
+    // Display array as level order
+    static void displayLevelOrder(String[] tree) {
         System.out.print("Level Order: ");
-        for (int i = 0; i < n; i++) {
-            System.out.print(tree[i] + " ");
+        for (int i = 0; i < tree.length; i++) {
+            if (tree[i] != null)
+                System.out.print(tree[i] + " ");
         }
         System.out.println();
     }
 
-    // -------- INORDER TRAVERSAL --------
-    // Left → Root → Right
-    static void inorder(int i) {
-        if (i >= n) return;
+    // Find height of tree
+    static int height(String[] tree, int i) {
+        if (i >= tree.length || tree[i] == null)
+            return 0;
 
-        inorder(2 * i + 1);       // left child
-        System.out.print(tree[i] + " ");
-        inorder(2 * i + 2);       // right child
-    }
-
-    // -------- PREORDER TRAVERSAL --------
-    // Root → Left → Right
-    static void preorder(int i) {
-        if (i >= n) return;
-
-        System.out.print(tree[i] + " ");
-        preorder(2 * i + 1);
-        preorder(2 * i + 2);
-    }
-
-    // -------- POSTORDER TRAVERSAL --------
-    // Left → Right → Root
-    static void postorder(int i) {
-        if (i >= n) return;
-
-        postorder(2 * i + 1);
-        postorder(2 * i + 2);
-        System.out.print(tree[i] + " ");
-    }
-
-    // -------- HEIGHT OF TREE --------
-    // Height = max height of left & right + 1
-    static int height(int i) {
-        if (i >= n) return 0;
-
-        int leftHeight = height(2 * i + 1);
-        int rightHeight = height(2 * i + 2);
+        int leftHeight = height(tree, 2 * i + 1);
+        int rightHeight = height(tree, 2 * i + 2);
 
         return Math.max(leftHeight, rightHeight) + 1;
     }
 
-    // -------- COUNT TOTAL NODES --------
-    static int countNodes() {
-        return n;   // number of elements in array = number of nodes
+    // Count total number of nodes
+    static int countNodes(String[] tree) {
+        int count = 0;
+        for (int i = 0; i < tree.length; i++) {
+            if (tree[i] != null)
+                count++;
+        }
+        return count;
     }
 
-    // -------- COUNT LEAF NODES --------
-    // Leaf node = node with no children
-    static int countLeafNodes() {
+    // Count number of leaf nodes
+    static int countLeafNodes(String[] tree) {
         int count = 0;
 
-        for (int i = 0; i < n; i++) {
-            int left = 2 * i + 1;
-            int right = 2 * i + 2;
+        for (int i = 0; i < tree.length; i++) {
+            if (tree[i] != null) {
+                int left = 2 * i + 1;
+                int right = 2 * i + 2;
 
-            if (left >= n && right >= n) {
-                count++;
+                if ((left >= tree.length || tree[left] == null) &&
+                    (right >= tree.length || tree[right] == null)) {
+                    count++;
+                }
             }
         }
         return count;
@@ -121,37 +127,37 @@ public class Assign1 {
                     break;
 
                 case 2:
-                    displayLevelOrder();
+                    displayLevelOrder(tree);
                     break;
 
                 case 3:
                     System.out.print("Inorder: ");
-                    inorder(0);
+                    Inorder(tree, 0);
                     System.out.println();
                     break;
 
                 case 4:
                     System.out.print("Preorder: ");
-                    preorder(0);
+                    preorder(tree, 0);
                     System.out.println();
                     break;
 
                 case 5:
                     System.out.print("Postorder: ");
-                    postorder(0);
+                    postorder(tree, 0);
                     System.out.println();
                     break;
 
                 case 6:
-                    System.out.println("Height of tree: " + height(0));
+                    System.out.println("Height of tree: " + height(tree, 0));
                     break;
 
                 case 7:
-                    System.out.println("Total nodes: " + countNodes());
+                    System.out.println("Total nodes: " + countNodes(tree));
                     break;
 
                 case 8:
-                    System.out.println("Leaf nodes: " + countLeafNodes());
+                    System.out.println("Leaf nodes: " + countLeafNodes(tree));
                     break;
 
                 case 9:
